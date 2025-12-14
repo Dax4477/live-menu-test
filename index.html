@@ -9,8 +9,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
-    <style>
-        /* Hide scrollbar on TV only */
+ <style>
+        /* Existing styles... */
         @media (min-width: 1024px) {
             body::-webkit-scrollbar { display: none; }
             body { -ms-overflow-style: none; scrollbar-width: none; }
@@ -19,6 +19,19 @@
         .font-body { font-family: 'Roboto', sans-serif; }
         .fade-in { animation: fadeIn 0.5s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- NEW SMOOTH SCROLL ANIMATION --- */
+        .smooth-scroll {
+            display: inline-block;
+            white-space: nowrap;
+            will-change: transform; /* Forces the device GPU to render this */
+            animation: scroll-left 25s linear infinite; /* 25s = Speed (Lower is faster) */
+        }
+        
+        @keyframes scroll-left {
+            from { transform: translateX(100vw); } /* Start completely off-screen right */
+            to { transform: translateX(-100%); }   /* End completely off-screen left */
+        }
     </style>
 </head>
 
