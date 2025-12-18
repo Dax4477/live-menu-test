@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obsera Solutions - Dynamic Menu</title>
+    <title>Obsera Solutions - Perfect Fit</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* Hide scrollbar on TV only */
-        @media (min-width: 768px) {
-            body::-webkit-scrollbar { display: none; }
-            body { -ms-overflow-style: none; scrollbar-width: none; }
-        }
+        /* Force scrollbar hidden on TV */
+        body::-webkit-scrollbar { display: none; }
+        body { -ms-overflow-style: none; scrollbar-width: none; }
+        
         .font-heading { font-family: 'Oswald', sans-serif; }
         .font-body { font-family: 'Roboto', sans-serif; }
         .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
         /* Smooth Scrolling Text */
         .smooth-scroll {
@@ -34,27 +34,29 @@
     </style>
 </head>
 
-<body class="bg-gray-900 text-white min-h-screen flex flex-col lg:h-screen lg:overflow-hidden font-body">
+<body class="bg-gray-900 text-white h-screen w-screen overflow-hidden flex flex-col font-body">
 
-    <header class="bg-red-700 p-4 lg:p-6 flex flex-col lg:flex-row justify-between items-center shadow-lg z-10 sticky top-0 w-full transition-colors duration-500" id="main-header">
-        <div class="text-center lg:text-left mb-2 lg:mb-0">
+    <header class="bg-red-700 p-3 lg:p-4 flex-none flex justify-between items-center shadow-lg z-20 relative">
+        <div>
             <h1 class="text-2xl lg:text-4xl font-heading font-bold uppercase tracking-wider">Spicy Kerala Bistro</h1>
-            <p class="text-red-200 text-xs lg:text-lg">Powered by Obsera Solutions</p>
+            <p class="text-red-200 text-xs lg:text-sm">Powered by Obsera Solutions</p>
         </div>
-        <div class="text-center lg:text-right flex flex-row lg:flex-col items-center gap-4 lg:gap-0">
+        <div class="text-right">
             <h2 id="menu-title" class="text-3xl lg:text-5xl font-heading font-bold text-white uppercase">LOADING...</h2>
-            <div id="clock" class="text-lg lg:text-xl text-red-100 mt-1 font-mono">00:00</div>
+            <div id="clock" class="text-lg lg:text-xl text-red-100 font-mono">00:00</div>
         </div>
     </header>
 
-    <main class="flex-grow px-4 lg:px-8 pt-2 pb-40 w-full">
-        <div id="menu-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 h-full content-start lg:content-center">
-            <p class="text-white text-xl text-center w-full col-span-1 lg:col-span-3">Loading Menu...</p>
+    <main class="flex-grow w-full p-3 lg:p-4 relative z-10">
+        
+        <div id="menu-container" class="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 gap-3 lg:gap-4 h-full w-full">
+            <p class="text-white text-xl text-center self-center w-full col-span-3">Loading Menu...</p>
         </div>
+
     </main>
 
-    <footer class="fixed bottom-0 left-0 w-full bg-black z-[9999] py-1 border-t-2 border-red-700 shadow-[0_-4px_10px_rgba(0,0,0,0.5)] overflow-hidden">
-        <div class="smooth-scroll text-sm lg:text-base text-yellow-400 font-bold leading-none block">
+    <footer class="bg-black flex-none py-1 border-t-4 border-red-700 shadow-xl z-20 relative">
+        <div class="smooth-scroll text-sm lg:text-xl text-yellow-400 font-bold leading-none block py-1">
             ★ TODAY'S SPECIAL: 20% OFF ON FAMILY PACKS ★ CONTACT OBSERA SOLUTIONS FOR ADVERTISING HERE
         </div>
     </footer>
@@ -73,47 +75,35 @@
     let slideTimer = null;          
     let isDataChanged = false;      
     let pendingDeck = null;
-    
-    // --- UPDATED DETECTION LOGIC ---
+
     function isMobile() {
-        // 1. Check for URL Override first (The "Force TV" switch)
         const params = new URLSearchParams(window.location.search);
-        if (params.get('mode') === 'tv') return false; // FORCE TV MODE
-        
-        // 2. Otherwise check screen size (Lowered limit to 768px to help Pi)
+        if (params.get('mode') === 'tv') return false; 
         return window.innerWidth < 768; 
     }
 
     function fetchMenuData() {
         const uniqueUrl = SHEET_URL + '&t=' + Date.now();
-        fetch(uniqueUrl, { cache: "no-store" })
-            .then(r => r.ok ? r.text() : null)
-            .then(csvText => {
-                if(csvText) {
-                    Papa.parse(csvText, {
-                        header: true, skipEmptyLines: true,
-                        complete: function(results) { processData(results.data); }
-                    });
-                }
-            })
-            .catch(e => console.error("Error:", e));
+        fetch(uniqueUrl, { cache: "no-store" }).then(r => r.ok ? r.text() : null).then(csvText => {
+            if(csvText) {
+                Papa.parse(csvText, {
+                    header: true, skipEmptyLines: true,
+                    complete: function(results) { processData(results.data); }
+                });
+            }
+        });
     }
 
     function processData(rows) {
         let groupedData = {};
-        
         rows.forEach(row => {
             let safeRow = {};
             Object.keys(row).forEach(k => safeRow[k.toLowerCase().trim()] = row[k]);
-
             if(safeRow.name) {
                 let cat = safeRow.category ? safeRow.category.trim().toUpperCase() : "OUR MENU";
                 if(cat === "") cat = "OUR MENU";
                 if (!groupedData[cat]) groupedData[cat] = [];
-                groupedData[cat].push({
-                    name: safeRow.name, price: safeRow.price,
-                    desc: safeRow.desc || safeRow.description || "", image: safeRow.image
-                });
+                groupedData[cat].push({ name: safeRow.name, price: safeRow.price, desc: safeRow.desc || safeRow.description || "", image: safeRow.image });
             }
         });
 
@@ -122,71 +112,49 @@
             const items = groupedData[categoryName];
             const totalPages = Math.ceil(items.length / ITEMS_PER_SLIDE);
             for(let i=0; i < totalPages; i++) {
-                const start = i * ITEMS_PER_SLIDE;
-                const end = start + ITEMS_PER_SLIDE;
-                newDeck.push({ title: categoryName, items: items.slice(start, end) });
+                newDeck.push({ title: categoryName, items: items.slice(i * ITEMS_PER_SLIDE, (i * ITEMS_PER_SLIDE) + ITEMS_PER_SLIDE) });
             }
         });
 
         if (slideDeck.length === 0) {
             slideDeck = newDeck;
-            if (slideDeck.length === 0) {
-                 document.getElementById('menu-container').innerHTML = '<p class="text-white text-2xl col-span-3 text-center">Sheet is empty.</p>';
-            } else {
-                 if(isMobile()) renderMobileView();
-                 else initSlideshow();
-            }
-        } else {
-            if (JSON.stringify(slideDeck) !== JSON.stringify(newDeck)) {
-                pendingDeck = newDeck;
-                isDataChanged = true;
-                if(isMobile()) {
-                    slideDeck = pendingDeck;
-                    renderMobileView();
-                    isDataChanged = false;
-                }
-            }
+            if(isMobile()) renderMobileView(); else initSlideshow();
+        } else if (JSON.stringify(slideDeck) !== JSON.stringify(newDeck)) {
+            pendingDeck = newDeck;
+            isDataChanged = true;
+            if(isMobile()) { slideDeck = pendingDeck; renderMobileView(); isDataChanged = false; }
         }
     }
 
+    // --- MOBILE VIEW ---
     function renderMobileView() {
         const container = document.getElementById('menu-container');
-        const titleElement = document.getElementById('menu-title');
+        document.getElementById('menu-title').innerText = "FULL MENU";
+        container.className = "grid grid-cols-1 gap-4 overflow-y-auto pb-4"; // Allow scroll on mobile
         container.innerHTML = '';
-        titleElement.innerText = "FULL MENU"; 
-        
-        // Force Mobile Layout (1 Column)
-        container.className = "grid grid-cols-1 gap-4 h-full content-start pb-20";
 
-        if (slideDeck.length === 0) return;
-
+        if (!slideDeck.length) return;
         slideDeck.forEach(page => {
             page.items.forEach(item => {
-                const fallbackImage = 'https://placehold.co/600x400/333/FFF?text=No+Image';
-                container.innerHTML += `
-                    <div class="flex bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-md h-32 fade-in relative">
+                 container.innerHTML += `
+                    <div class="flex bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-md h-28 shrink-0 relative">
                         <span class="absolute top-0 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-1 z-10 rounded-br-lg">${page.title}</span>
-                        <div class="w-1/3 bg-gray-700 relative">
-                            <img src="${item.image}" class="h-full w-full object-cover absolute inset-0" onerror="this.src='${fallbackImage}'">
-                        </div>
-                        <div class="w-2/3 p-3 flex flex-col justify-center">
-                            <div class="flex justify-between items-start mb-1">
-                                <h3 class="text-lg font-bold text-yellow-500 font-heading leading-tight line-clamp-2">${item.name}</h3>
-                                <span class="bg-gray-900 border border-gray-600 text-white px-2 py-0.5 rounded text-sm font-bold whitespace-nowrap ml-2">${item.price}</span>
-                            </div>
-                            <p class="text-gray-300 text-xs leading-snug line-clamp-2">${item.desc}</p>
+                        <div class="w-1/3 bg-gray-700 relative"><img src="${item.image}" class="h-full w-full object-cover absolute inset-0"></div>
+                        <div class="w-2/3 p-2 flex flex-col justify-center">
+                            <div class="flex justify-between items-start"><h3 class="text-lg font-bold text-yellow-500 font-heading leading-none">${item.name}</h3><span class="bg-gray-900 text-white px-2 py-0.5 rounded text-sm font-bold">${item.price}</span></div>
+                            <p class="text-gray-300 text-xs leading-tight mt-1 line-clamp-2">${item.desc}</p>
                         </div>
                     </div>`;
             });
         });
     }
 
+    // --- TV VIEW (The Fix: Dynamic Height) ---
     function initSlideshow() {
         if(isMobile()) return;
-
-        // Force TV Layout (3 Columns)
-        document.getElementById('menu-container').className = "grid grid-cols-3 gap-6 h-full content-center";
-
+        // Fix grid to fill height exactly
+        document.getElementById('menu-container').className = "grid grid-cols-3 grid-rows-2 gap-4 h-full w-full"; 
+        
         currentSlideIndex = 0;
         showSlide(0); 
         if (slideTimer) clearInterval(slideTimer);
@@ -196,13 +164,7 @@
     function nextSlide() {
         currentSlideIndex++;
         if (currentSlideIndex >= slideDeck.length) {
-            if (isDataChanged && pendingDeck) {
-                slideDeck = pendingDeck; 
-                isDataChanged = false;
-                pendingDeck = null;
-                initSlideshow(); 
-                return;
-            }
+            if (isDataChanged && pendingDeck) { slideDeck = pendingDeck; isDataChanged = false; pendingDeck = null; initSlideshow(); return; }
             currentSlideIndex = 0;
         }
         showSlide(currentSlideIndex);
@@ -212,44 +174,33 @@
         if(!slideDeck[index]) return;
         const container = document.getElementById('menu-container');
         document.getElementById('menu-title').innerText = slideDeck[index].title;
-        const pageItems = slideDeck[index].items;
         container.innerHTML = ''; 
 
-        pageItems.forEach(item => {
+        // RENDER ITEMS WITH FLEX HEIGHT (h-full)
+        slideDeck[index].items.forEach(item => {
             const fallbackImage = 'https://placehold.co/600x400/333/FFF?text=No+Image';
             container.innerHTML += `
-                <div class="flex bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-xl fade-in h-48">
-                    <div class="w-1/3 bg-gray-700 relative">
+                <div class="flex bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-xl fade-in h-full w-full">
+                    <div class="w-5/12 bg-gray-700 relative">
                         <img src="${item.image}" class="h-full w-full object-cover absolute inset-0" onerror="this.src='${fallbackImage}'">
                     </div>
-                    <div class="w-2/3 p-4 flex flex-col justify-center">
+                    <div class="w-7/12 p-3 flex flex-col justify-center">
                         <div class="flex justify-between items-start mb-1">
-                            <h3 class="text-xl font-bold text-yellow-500 font-heading leading-tight line-clamp-2">${item.name}</h3>
-                            <span class="bg-red-600 text-white px-2 py-1 rounded text-lg font-bold whitespace-nowrap ml-2">${item.price}</span>
+                            <h3 class="text-xl lg:text-2xl font-bold text-yellow-500 font-heading leading-tight line-clamp-2">${item.name}</h3>
+                            <span class="bg-red-600 text-white px-2 py-1 rounded text-lg font-bold whitespace-nowrap ml-2 shadow">${item.price}</span>
                         </div>
-                        <p class="text-gray-300 text-sm leading-snug line-clamp-3">${item.desc}</p>
+                        <p class="text-gray-300 text-sm lg:text-base leading-snug line-clamp-3">${item.desc}</p>
                     </div>
                 </div>`;
         });
     }
 
-    function updateClock() {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-
-    window.addEventListener('resize', () => {
-        if(isMobile()) {
-            if(slideTimer) clearInterval(slideTimer);
-            renderMobileView();
-        } else {
-            initSlideshow();
-        }
-    });
+    function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+    window.addEventListener('resize', () => { isMobile() ? renderMobileView() : initSlideshow(); });
 
     fetchMenuData(); 
     setInterval(updateClock, 1000); 
     setInterval(fetchMenuData, CHECK_INTERVAL); 
-
 </script>
 </body>
 </html>
