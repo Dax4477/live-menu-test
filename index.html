@@ -3,32 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Obsera Solutions - Smart Resolution</title>
+    <title>Obsera Solutions - Price Fix</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* 1. GLOBAL SETTINGS */
         body { 
             background-color: #111827; 
             color: white; 
             overflow: hidden; 
             font-family: 'Oswald', sans-serif; 
-            /* Improved Rendering for TV */
             -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
         }
 
-        /* 2. TEXT SHADOWS (Essential for contrast) */
         .shadow-text { text-shadow: 2px 2px 4px rgba(0,0,0,0.9); }
-        .shadow-box { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); }
 
-        /* 3. STRICT LAYOUT GRID */
         .page-wrapper {
             display: grid;
-            grid-template-rows: 14vh 1fr 9vh; /* Header, Content, Footer */
+            grid-template-rows: 14vh 1fr 9vh; 
             height: 100vh;
             width: 100vw;
         }
@@ -37,23 +31,19 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(2, 1fr);
-            gap: 1.5rem; 
-            padding: 1.5rem;
+            gap: 1.2rem; 
+            padding: 1.2rem;
             width: 100%;
             height: 100%;
         }
 
-        /* 4. SMART TEXT SIZES (Using 'rem' relative to our Javascript calculation) */
-        /* If JS calculates base is 20px, then 2rem = 40px */
-        .smart-title { font-size: 2.2rem; line-height: 1.1; font-weight: 700; }
-        .smart-price { font-size: 2.0rem; font-weight: 700; }
-        .smart-desc  { font-size: 1.1rem; line-height: 1.3; color: #d1d5db; font-family: sans-serif; font-weight: 400; }
-        .smart-head  { font-size: 3.0rem; }
-        .smart-sub   { font-size: 1.0rem; }
-        .smart-clock { font-size: 1.5rem; }
-        .smart-foot  { font-size: 1.4rem; }
+        /* SMART TEXT SIZES */
+        .smart-title { font-size: 2.0rem; line-height: 1.1; font-weight: 700; }
+        .smart-price { font-size: 1.9rem; font-weight: 700; }
+        .smart-desc  { font-size: 1.0rem; line-height: 1.3; color: #d1d5db; font-family: sans-serif; }
+        .smart-head  { font-size: 2.8rem; }
+        .smart-clock { font-size: 1.4rem; }
 
-        /* 5. SCROLLING TEXT */
         .smooth-scroll {
             display: inline-block;
             white-space: nowrap;
@@ -64,65 +54,45 @@
 </head>
 
 <body>
-
     <div class="page-wrapper">
-        
-        <header class="bg-red-700 flex justify-between items-center px-[2rem] shadow-lg relative z-20 border-b-4 border-red-900">
+        <header class="bg-red-700 flex justify-between items-center px-[2rem] shadow-lg z-20 border-b-4 border-red-900">
             <div>
                 <h1 class="smart-head font-bold uppercase tracking-wider text-white leading-none shadow-text">Spicy Kerala Bistro</h1>
-                <p class="smart-sub text-red-100 mt-1 font-medium tracking-wide opacity-90">Powered by Obsera Solutions</p>
+                <p class="text-[0.9rem] text-red-100 mt-1 opacity-90 font-sans">Powered by Obsera Solutions</p>
             </div>
             <div class="text-right">
                 <h2 id="menu-title" class="smart-head font-bold text-white uppercase leading-none mb-1 shadow-text">LOADING...</h2>
-                <div id="clock" class="smart-clock font-bold bg-black border border-red-500 px-[1rem] py-[0.2rem] rounded text-red-500 inline-block tracking-widest font-mono">00:00:00</div>
+                <div id="clock" class="smart-clock font-bold bg-black border border-red-500 px-[1rem] py-[0.1rem] rounded text-red-500 inline-block font-mono">00:00:00</div>
             </div>
         </header>
 
         <main class="w-full h-full relative z-10">
             <div id="menu-container" class="menu-grid">
-                <p class="text-white smart-title text-center col-span-3 self-center">Analyzing Screen Resolution...</p>
+                <p class="text-white smart-title text-center col-span-3 self-center">Calibrating Display...</p>
             </div>
         </main>
 
         <footer class="bg-black border-t-4 border-red-700 shadow-xl relative z-20 flex items-center overflow-hidden">
-            <div class="smooth-scroll smart-foot text-yellow-400 font-bold leading-none block w-full tracking-wide shadow-text">
+            <div class="smooth-scroll text-[1.3rem] text-yellow-400 font-bold leading-none block w-full shadow-text">
                 ★ TODAY'S SPECIAL: 20% OFF ON FAMILY PACKS ★ CONTACT OBSERA SOLUTIONS FOR ADVERTISING HERE
             </div>
         </footer>
-
     </div>
 
 <script>
-    // --- 1. RESOLUTION ANALYZER ENGINE ---
+    // AUTO-RESOLUTION MATH
     function optimizeForResolution() {
         const width = window.innerWidth;
-        const height = window.innerHeight;
-        
-        // Base calculation: We want standard text to be roughly 1.5% of the screen width
-        // For 1920px (1080p), this makes base font ~28px.
-        // For 1280px (720p), this makes base font ~19px.
-        // This ensures text is PHYSICALLY the same size on all screens.
-        let pixelSize = (width / 100) * 1.4;
-
-        // Safety Limits (Don't get too small on phones, don't get massive on 8K)
+        let pixelSize = (width / 100) * 1.3;
         if (pixelSize < 14) pixelSize = 14; 
-        if (pixelSize > 50) pixelSize = 50;
-
-        // Apply to Root. All 'rem' values will multiply off this number.
         document.documentElement.style.fontSize = pixelSize + 'px';
-        
-        console.log(`Screen: ${width}x${height} | Base Font Set To: ${pixelSize}px`);
     }
 
-    // Run optimization immediately and whenever window resizes
     optimizeForResolution();
     window.addEventListener('resize', optimizeForResolution);
 
-
-    // --- 2. CONFIGURATION ---
     const SHEET_ID = '1-dBjgzUDtImlzb5IH_nAubQ3nXWAbh72EPbd2O4l8uY'; 
     const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=0`;
-
     const ITEMS_PER_SLIDE = 6;      
     const SLIDE_DURATION = 8000;    
     const CHECK_INTERVAL = 10000;   
@@ -157,7 +127,6 @@
             Object.keys(row).forEach(k => safeRow[k.toLowerCase().trim()] = row[k]);
             if(safeRow.name) {
                 let cat = safeRow.category ? safeRow.category.trim().toUpperCase() : "OUR MENU";
-                if(cat === "") cat = "OUR MENU";
                 if (!groupedData[cat]) groupedData[cat] = [];
                 groupedData[cat].push({ name: safeRow.name, price: safeRow.price, desc: safeRow.desc || safeRow.description || "", image: safeRow.image });
             }
@@ -178,42 +147,13 @@
         } else if (JSON.stringify(slideDeck) !== JSON.stringify(newDeck)) {
             pendingDeck = newDeck;
             isDataChanged = true;
-            if(isMobile()) { slideDeck = pendingDeck; renderMobileView(); isDataChanged = false; }
         }
     }
 
-    // --- MOBILE VIEW ---
-    function renderMobileView() {
-        const container = document.getElementById('menu-container');
-        document.getElementById('menu-title').innerText = "FULL MENU";
-        container.style.display = 'block';
-        container.style.overflowY = 'auto';
-        container.innerHTML = '';
-        if (!slideDeck.length) return;
-        slideDeck.forEach(page => {
-            page.items.forEach(item => {
-                 container.innerHTML += `
-                    <div class="flex bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-md h-28 mb-4 relative shrink-0">
-                        <span class="absolute top-0 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-1 z-10 rounded-br-lg">${page.title}</span>
-                        <div class="w-1/3 bg-gray-700 relative"><img src="${item.image}" class="h-full w-full object-cover absolute inset-0"></div>
-                        <div class="w-2/3 p-2 flex flex-col justify-center">
-                            <div class="flex justify-between items-start"><h3 class="text-base font-bold text-yellow-500 leading-none line-clamp-2">${item.name}</h3><span class="bg-gray-900 text-white px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap ml-1">${item.price}</span></div>
-                            <p class="text-gray-300 text-xs leading-tight mt-1 line-clamp-2 font-sans">${item.desc}</p>
-                        </div>
-                    </div>`;
-            });
-        });
-    }
-
-    // --- TV VIEW ---
     function initSlideshow() {
         if(isMobile()) return;
-        optimizeForResolution(); // Ensure math is done before rendering
-        
         const container = document.getElementById('menu-container');
         container.style.display = 'grid'; 
-        container.style.overflowY = 'hidden'; 
-        
         currentSlideIndex = 0;
         showSlide(0); 
         if (slideTimer) clearInterval(slideTimer);
@@ -228,8 +168,6 @@
                 slideDeck = pendingDeck; 
                 isDataChanged = false; 
                 pendingDeck = null;
-                clearInterval(slideTimer);
-                slideTimer = setInterval(nextSlide, SLIDE_DURATION);
             }
         }
         showSlide(currentSlideIndex);
@@ -245,27 +183,23 @@
             const fallbackImage = 'https://placehold.co/600x400/333/FFF?text=No+Image';
             
             container.innerHTML += `
-                <div class="flex bg-gray-800 rounded-xl overflow-hidden border-2 border-gray-700 shadow-box w-full h-full relative">
-                    <div class="w-[35%] bg-gray-700 relative h-full border-r-2 border-gray-600">
+                <div class="flex bg-gray-800 rounded-xl overflow-hidden border-2 border-gray-700 shadow-xl w-full h-full relative">
+                    <div class="w-[38%] bg-gray-700 relative h-full border-r-2 border-gray-600">
                         <img src="${item.image}" class="h-full w-full object-cover absolute inset-0" onerror="this.src='${fallbackImage}'">
                     </div>
                     
-                    <div class="w-[65%] p-[1rem] flex flex-col justify-center h-full overflow-hidden bg-gray-900">
-                        
-                        <div class="flex justify-between items-start mb-[0.5rem] gap-2">
-                            <h3 class="smart-title text-yellow-400 leading-none line-clamp-2 shadow-text">${item.name}</h3>
-                            <span class="bg-red-600 text-white px-[0.8rem] py-[0.2rem] rounded-lg smart-price whitespace-nowrap shadow-text flex items-center h-min border border-white">${item.price}</span>
+                    <div class="w-[62%] p-[0.8rem] flex flex-col justify-center h-full overflow-hidden bg-gray-900">
+                        <div class="flex justify-between items-center mb-[0.3rem] gap-2">
+                            <h3 class="smart-title text-yellow-400 leading-tight line-clamp-2 shadow-text flex-grow">${item.name}</h3>
+                            <span class="bg-red-600 text-white px-[0.6rem] py-[0.1rem] rounded-lg smart-price whitespace-nowrap shadow-text flex-shrink-0 border border-white/30">${item.price}</span>
                         </div>
-                        
-                        <p class="smart-desc leading-snug line-clamp-3 overflow-hidden text-ellipsis shadow-text">${item.desc}</p>
+                        <p class="smart-desc line-clamp-3 overflow-hidden shadow-text">${item.desc}</p>
                     </div>
                 </div>`;
         });
     }
 
     function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
-    
-    window.addEventListener('resize', () => { isMobile() ? renderMobileView() : initSlideshow(); });
     fetchMenuData(); 
     setInterval(updateClock, 1000); 
     setInterval(fetchMenuData, CHECK_INTERVAL); 
