@@ -3,38 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Obsera Solutions - HD Menu</title>
+    <title>Obsera Solutions - Crystal Clear</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* 1. HD RENDERING SETTINGS */
+        /* 1. HIGH CLARITY SETTINGS */
         body { 
             background-color: #111827; 
             color: white; 
-            overflow: hidden; /* No scrolling on TV */
-            -webkit-font-smoothing: antialiased; /* Sharper Text */
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
-        /* Forces images to look sharp */
-        img { 
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: high-quality;
+            overflow: hidden; 
+            font-family: 'Oswald', sans-serif; /* Use Thick font for everything */
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* 2. LAYOUT GRID (Strict 3-Row System) */
+        /* 2. TEXT SHADOWS (Crucial for TV Legibility) */
+        .text-shadow-md { text-shadow: 2px 2px 2px rgba(0,0,0,0.9); }
+        .text-shadow-sm { text-shadow: 1px 1px 1px rgba(0,0,0,0.8); }
+
+        /* 3. STRICT GRID LAYOUT */
         .page-wrapper {
             display: grid;
-            grid-template-rows: 14vh 1fr 10vh; /* Header=14%, Content=Auto, Footer=10% */
+            grid-template-rows: 14vh 1fr 10vh; 
             height: 100vh;
             width: 100vw;
         }
 
-        /* 3. MENU ITEMS GRID */
-        /* Exact 3 columns x 2 rows layout */
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -45,22 +41,19 @@
             height: 100%;
         }
 
-        /* 4. SCROLLING TEXT ANIMATION */
+        /* 4. BIGGER & BOLDER TEXT SIZES */
+        .text-hd-title { font-size: 4.0vh; line-height: 1.1; font-weight: 700; letter-spacing: 0.5px; }
+        .text-hd-price { font-size: 3.5vh; font-weight: 700; }
+        .text-hd-desc  { font-size: 2.2vh; line-height: 1.3; color: #e5e7eb; font-weight: 400; font-family: sans-serif; } /* Keep desc simple */
+        .text-hd-head  { font-size: 5.0vh; }
+
+        /* 5. SCROLL ANIMATION */
         .smooth-scroll {
             display: inline-block;
             white-space: nowrap;
             animation: scroll-left 25s linear infinite;
         }
         @keyframes scroll-left { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
-
-        /* 5. TYPOGRAPHY (Responsive to Height) */
-        .text-hd-title { font-size: 3.2vh; line-height: 1.1; }
-        .text-hd-price { font-size: 2.8vh; }
-        .text-hd-desc  { font-size: 1.9vh; line-height: 1.3; color: #d1d5db; }
-        .text-hd-head  { font-size: 4.5vh; }
-        
-        .font-heading { font-family: 'Oswald', sans-serif; }
-        .font-body { font-family: 'Roboto', sans-serif; }
     </style>
 </head>
 
@@ -68,25 +61,25 @@
 
     <div class="page-wrapper">
         
-        <header class="bg-red-700 flex justify-between items-center px-6 shadow-lg relative z-20">
+        <header class="bg-red-700 flex justify-between items-center px-6 shadow-lg relative z-20 border-b-4 border-red-900">
             <div>
-                <h1 class="text-hd-head font-heading font-bold uppercase tracking-wider text-white leading-none">Spicy Kerala Bistro</h1>
-                <p class="text-[2vh] text-red-200 mt-1">Powered by Obsera Solutions</p>
+                <h1 class="text-hd-head font-bold uppercase tracking-wider text-white leading-none text-shadow-md">Spicy Kerala Bistro</h1>
+                <p class="text-[2.2vh] text-red-100 mt-1 font-medium tracking-wide">Powered by Obsera Solutions</p>
             </div>
             <div class="text-right">
-                <h2 id="menu-title" class="text-[5vh] font-heading font-bold text-white uppercase leading-none mb-1">LOADING...</h2>
-                <div id="clock" class="text-[2.5vh] font-mono font-bold bg-red-800 px-4 py-1 rounded text-red-100 inline-block">00:00:00</div>
+                <h2 id="menu-title" class="text-[5.5vh] font-bold text-white uppercase leading-none mb-1 text-shadow-md">LOADING...</h2>
+                <div id="clock" class="text-[3vh] font-bold bg-black border border-red-500 px-4 py-1 rounded text-red-500 inline-block tracking-widest">00:00:00</div>
             </div>
         </header>
 
         <main class="w-full h-full relative z-10">
             <div id="menu-container" class="menu-grid">
-                <p class="text-white text-[3vh] text-center col-span-3 self-center">Connecting to Menu...</p>
+                <p class="text-white text-[4vh] text-center col-span-3 self-center">Connecting...</p>
             </div>
         </main>
 
         <footer class="bg-black border-t-4 border-red-700 shadow-xl relative z-20 flex items-center overflow-hidden">
-            <div class="smooth-scroll text-[2.5vh] text-yellow-400 font-bold leading-none block w-full">
+            <div class="smooth-scroll text-[3vh] text-yellow-400 font-bold leading-none block w-full tracking-wide text-shadow-sm">
                 ★ TODAY'S SPECIAL: 20% OFF ON FAMILY PACKS ★ CONTACT OBSERA SOLUTIONS FOR ADVERTISING HERE
             </div>
         </footer>
@@ -108,9 +101,7 @@
     let isDataChanged = false;      
     let pendingDeck = null;
 
-    // Detect Mobile (Simple width check)
     function isMobile() {
-        // If "mode=tv" is in URL, force TV mode
         if (window.location.search.includes('mode=tv')) return false;
         return window.innerWidth < 768; 
     }
@@ -159,16 +150,13 @@
         }
     }
 
-    // --- MOBILE RENDERER ---
+    // --- MOBILE ---
     function renderMobileView() {
         const container = document.getElementById('menu-container');
         document.getElementById('menu-title').innerText = "FULL MENU";
-        
-        // Switch to scrolling list for phone
         container.style.display = 'block';
         container.style.overflowY = 'auto';
         container.innerHTML = '';
-        
         if (!slideDeck.length) return;
         slideDeck.forEach(page => {
             page.items.forEach(item => {
@@ -177,80 +165,64 @@
                         <span class="absolute top-0 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-1 z-10 rounded-br-lg">${page.title}</span>
                         <div class="w-1/3 bg-gray-700 relative"><img src="${item.image}" class="h-full w-full object-cover absolute inset-0"></div>
                         <div class="w-2/3 p-2 flex flex-col justify-center">
-                            <div class="flex justify-between items-start"><h3 class="text-base font-bold text-yellow-500 font-heading leading-none line-clamp-2">${item.name}</h3><span class="bg-gray-900 text-white px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap ml-1">${item.price}</span></div>
-                            <p class="text-gray-300 text-xs leading-tight mt-1 line-clamp-2">${item.desc}</p>
+                            <div class="flex justify-between items-start"><h3 class="text-base font-bold text-yellow-500 leading-none line-clamp-2">${item.name}</h3><span class="bg-gray-900 text-white px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap ml-1">${item.price}</span></div>
+                            <p class="text-gray-300 text-xs leading-tight mt-1 line-clamp-2 font-sans">${item.desc}</p>
                         </div>
                     </div>`;
             });
         });
     }
 
-    // --- TV SLIDESHOW ENGINE ---
+    // --- TV ---
     function initSlideshow() {
         if(isMobile()) return;
-        
-        // Enforce Strict Grid for TV
         const container = document.getElementById('menu-container');
         container.style.display = 'grid'; 
         container.style.overflowY = 'hidden'; 
-        
-        // Start Loop
         currentSlideIndex = 0;
         showSlide(0); 
-        
         if (slideTimer) clearInterval(slideTimer);
         slideTimer = setInterval(nextSlide, SLIDE_DURATION);
     }
 
     function nextSlide() {
         currentSlideIndex++;
-
-        // INFINITE LOOP LOGIC
         if (currentSlideIndex >= slideDeck.length) {
-            
-            // 1. Reset to start
             currentSlideIndex = 0;
-
-            // 2. Check for updates while we are at the restart point
             if (isDataChanged && pendingDeck) { 
-                console.log("Applying Data Update...");
                 slideDeck = pendingDeck; 
                 isDataChanged = false; 
                 pendingDeck = null;
-                // Restart timer to avoid glitch
                 clearInterval(slideTimer);
                 slideTimer = setInterval(nextSlide, SLIDE_DURATION);
             }
         }
-        
         showSlide(currentSlideIndex);
     }
 
     function showSlide(index) {
         if(!slideDeck || !slideDeck[index]) return;
-        
         const container = document.getElementById('menu-container');
         document.getElementById('menu-title').innerText = slideDeck[index].title;
         container.innerHTML = ''; 
 
-        // Render Cards (HD Mode)
         slideDeck[index].items.forEach(item => {
             const fallbackImage = 'https://placehold.co/600x400/333/FFF?text=No+Image';
             
             container.innerHTML += `
-                <div class="flex bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-xl w-full h-full relative">
-                    <div class="w-5/12 bg-gray-700 relative h-full border-r border-gray-600">
+                <div class="flex bg-gray-800 rounded-xl overflow-hidden border-2 border-gray-700 shadow-lg w-full h-full relative">
+                    <div class="w-[35%] bg-gray-700 relative h-full border-r-2 border-gray-600">
                         <img src="${item.image}" class="h-full w-full object-cover absolute inset-0" onerror="this.src='${fallbackImage}'">
                     </div>
                     
-                    <div class="w-7/12 p-[2vh] flex flex-col justify-center h-full overflow-hidden">
+                    <div class="w-[65%] p-[2vh] flex flex-col justify-center h-full overflow-hidden bg-gray-900">
                         
-                        <div class="flex justify-between items-start mb-[1vh] gap-2">
-                            <h3 class="text-hd-title font-bold text-yellow-500 font-heading leading-tight line-clamp-2">${item.name}</h3>
-                            <span class="bg-red-600 text-white px-[1.5vh] py-[0.5vh] rounded text-hd-price font-bold whitespace-nowrap shadow shrink-0 flex items-center h-min">${item.price}</span>
+                        <div class="flex justify-between items-start mb-[1vh] gap-3">
+                            <h3 class="text-hd-title text-yellow-400 leading-none line-clamp-2 text-shadow-md">${item.name}</h3>
+                            <span class="bg-red-600 text-white px-[2vh] py-[0.5vh] rounded-lg text-hd-price whitespace-nowrap shadow-md flex items-center h-min border border-white">${item.price}</span>
                         </div>
                         
-                        <p class="text-hd-desc leading-snug line-clamp-3 overflow-hidden text-ellipsis">${item.desc}</p>
+                        <p class="text-hd-desc leading-snug line-clamp-3 overflow-hidden text-ellipsis text-shadow-sm">${item.desc}</p>
                     </div>
                 </div>`;
         });
@@ -259,7 +231,6 @@
     function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
     
     window.addEventListener('resize', () => { isMobile() ? renderMobileView() : initSlideshow(); });
-    
     fetchMenuData(); 
     setInterval(updateClock, 1000); 
     setInterval(fetchMenuData, CHECK_INTERVAL); 
