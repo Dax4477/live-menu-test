@@ -3,68 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obsera Solutions - Perfect Fit</title>
+    <title>Obsera Solutions - Auto Fit</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* Force scrollbar hidden on TV */
+        /* Force hidden scrollbars */
         body::-webkit-scrollbar { display: none; }
         body { -ms-overflow-style: none; scrollbar-width: none; }
         
         .font-heading { font-family: 'Oswald', sans-serif; }
         .font-body { font-family: 'Roboto', sans-serif; }
         .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-        /* Smooth Scrolling Text */
         .smooth-scroll {
             display: inline-block;
             white-space: nowrap;
-            will-change: transform;
             animation: scroll-left 25s linear infinite;
         }
         @keyframes scroll-left {
             from { transform: translateX(100vw); }
             to { transform: translateX(-100%); } 
         }
+
+        /* COMPACT MODE OVERRIDES */
+        /* Ensures text doesn't wrap awkwardly on small 'logical' screens */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
     </style>
 </head>
 
-<body class="bg-gray-900 text-white h-screen w-screen overflow-hidden flex flex-col font-body">
+<body id="app-body" class="bg-gray-900 text-white h-screen w-screen overflow-hidden flex flex-col font-body">
 
-    <header class="bg-red-700 p-3 lg:p-4 flex-none flex justify-between items-center shadow-lg z-20 relative">
+    <header class="bg-red-700 p-2 lg:p-3 flex-none flex justify-between items-center shadow-lg z-20 relative h-[10vh]">
         <div>
-            <h1 class="text-2xl lg:text-4xl font-heading font-bold uppercase tracking-wider">Spicy Kerala Bistro</h1>
-            <p class="text-red-200 text-xs lg:text-sm">Powered by Obsera Solutions</p>
+            <h1 class="text-xl lg:text-3xl font-heading font-bold uppercase tracking-wider">Spicy Kerala Bistro</h1>
+            <p class="text-red-200 text-xs">Powered by Obsera Solutions</p>
         </div>
         <div class="text-right">
-            <h2 id="menu-title" class="text-3xl lg:text-5xl font-heading font-bold text-white uppercase">LOADING...</h2>
-            <div id="clock" class="text-lg lg:text-xl text-red-100 font-mono">00:00</div>
+            <h2 id="menu-title" class="text-2xl lg:text-4xl font-heading font-bold text-white uppercase">LOADING...</h2>
+            <div id="clock" class="text-base lg:text-lg text-red-100 font-mono">00:00</div>
         </div>
     </header>
 
-    <main class="flex-grow w-full p-3 lg:p-4 relative z-10">
-        
-        <div id="menu-container" class="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 gap-3 lg:gap-4 h-full w-full">
+    <main class="flex-grow w-full p-2 lg:p-3 relative z-10 h-[82vh]">
+        <div id="menu-container" class="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 gap-3 h-full w-full">
             <p class="text-white text-xl text-center self-center w-full col-span-3">Loading Menu...</p>
         </div>
-
     </main>
 
-    <footer class="bg-black flex-none py-1 border-t-4 border-red-700 shadow-xl z-20 relative">
-        <div class="smooth-scroll text-sm lg:text-xl text-yellow-400 font-bold leading-none block py-1">
+    <footer class="bg-black flex-none border-t-4 border-red-700 shadow-xl z-20 relative h-[8vh] flex items-center">
+        <div class="smooth-scroll text-sm lg:text-xl text-yellow-400 font-bold leading-none block w-full">
             ★ TODAY'S SPECIAL: 20% OFF ON FAMILY PACKS ★ CONTACT OBSERA SOLUTIONS FOR ADVERTISING HERE
         </div>
     </footer>
 
 <script>
-    // --- CONFIGURATION ---
+    // --- 1. CONFIGURATION ---
     const SHEET_ID = '1-dBjgzUDtImlzb5IH_nAubQ3nXWAbh72EPbd2O4l8uY'; 
     const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=0`;
+
+    // FORCE ZOOM FOR RASPBERRY PI
+    // If items look too big, change this to 0.8 or 0.7
+    const DEFAULT_ZOOM = 0.85; 
 
     const ITEMS_PER_SLIDE = 6;      
     const SLIDE_DURATION = 8000;    
@@ -80,6 +88,24 @@
         const params = new URLSearchParams(window.location.search);
         if (params.get('mode') === 'tv') return false; 
         return window.innerWidth < 768; 
+    }
+
+    // --- AUTO ZOOM SCRIPT ---
+    function applyAutoZoom() {
+        if (isMobile()) return; // Don't zoom on phones
+
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        // Uncomment to see what your Pi sees:
+        // document.getElementById('debug-info').innerText = `Res: ${width}x${height}`;
+
+        // If screen thinks it is small (common Pi issue), force zoom out
+        if (height < 900) {
+            document.body.style.zoom = "75%";
+        } else {
+            document.body.style.zoom = "100%"; 
+        }
     }
 
     function fetchMenuData() {
@@ -126,13 +152,11 @@
         }
     }
 
-    // --- MOBILE VIEW ---
     function renderMobileView() {
         const container = document.getElementById('menu-container');
         document.getElementById('menu-title').innerText = "FULL MENU";
-        container.className = "grid grid-cols-1 gap-4 overflow-y-auto pb-4"; // Allow scroll on mobile
+        container.className = "grid grid-cols-1 gap-4 overflow-y-auto pb-20";
         container.innerHTML = '';
-
         if (!slideDeck.length) return;
         slideDeck.forEach(page => {
             page.items.forEach(item => {
@@ -149,12 +173,12 @@
         });
     }
 
-    // --- TV VIEW (The Fix: Dynamic Height) ---
     function initSlideshow() {
         if(isMobile()) return;
-        // Fix grid to fill height exactly
-        document.getElementById('menu-container').className = "grid grid-cols-3 grid-rows-2 gap-4 h-full w-full"; 
         
+        applyAutoZoom(); // RUN THE ZOOM FIX
+
+        document.getElementById('menu-container').className = "grid grid-cols-3 grid-rows-2 gap-4 h-full w-full"; 
         currentSlideIndex = 0;
         showSlide(0); 
         if (slideTimer) clearInterval(slideTimer);
@@ -176,28 +200,34 @@
         document.getElementById('menu-title').innerText = slideDeck[index].title;
         container.innerHTML = ''; 
 
-        // RENDER ITEMS WITH FLEX HEIGHT (h-full)
         slideDeck[index].items.forEach(item => {
             const fallbackImage = 'https://placehold.co/600x400/333/FFF?text=No+Image';
+            // NOTE: Added min-h-0 and overflow-hidden to ensure it never grows larger than the grid cell
             container.innerHTML += `
-                <div class="flex bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-xl fade-in h-full w-full">
-                    <div class="w-5/12 bg-gray-700 relative">
+                <div class="flex bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-xl fade-in w-full h-full min-h-0">
+                    <div class="w-5/12 bg-gray-700 relative h-full">
                         <img src="${item.image}" class="h-full w-full object-cover absolute inset-0" onerror="this.src='${fallbackImage}'">
                     </div>
-                    <div class="w-7/12 p-3 flex flex-col justify-center">
-                        <div class="flex justify-between items-start mb-1">
-                            <h3 class="text-xl lg:text-2xl font-bold text-yellow-500 font-heading leading-tight line-clamp-2">${item.name}</h3>
-                            <span class="bg-red-600 text-white px-2 py-1 rounded text-lg font-bold whitespace-nowrap ml-2 shadow">${item.price}</span>
+                    <div class="w-7/12 p-2 lg:p-3 flex flex-col justify-center h-full overflow-hidden">
+                        <div class="flex justify-between items-start mb-1 shrink-0">
+                            <h3 class="text-lg lg:text-xl font-bold text-yellow-500 font-heading leading-tight line-clamp-2">${item.name}</h3>
+                            <span class="bg-red-600 text-white px-2 py-0.5 rounded text-base font-bold whitespace-nowrap ml-2 shadow">${item.price}</span>
                         </div>
-                        <p class="text-gray-300 text-sm lg:text-base leading-snug line-clamp-3">${item.desc}</p>
+                        <p class="text-gray-300 text-xs lg:text-sm leading-snug line-clamp-3 overflow-hidden text-ellipsis">${item.desc}</p>
                     </div>
                 </div>`;
         });
     }
 
     function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
-    window.addEventListener('resize', () => { isMobile() ? renderMobileView() : initSlideshow(); });
-
+    
+    window.addEventListener('resize', () => { 
+        applyAutoZoom();
+        isMobile() ? renderMobileView() : initSlideshow(); 
+    });
+    
+    // Initial run
+    applyAutoZoom();
     fetchMenuData(); 
     setInterval(updateClock, 1000); 
     setInterval(fetchMenuData, CHECK_INTERVAL); 
