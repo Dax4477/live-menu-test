@@ -28,39 +28,30 @@
             from { transform: translateX(100vw); }
             to { transform: translateX(-100%); } 
         }
-
-        /* COMPACT MODE OVERRIDES */
-        /* Ensures text doesn't wrap awkwardly on small 'logical' screens */
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
     </style>
 </head>
 
 <body id="app-body" class="bg-gray-900 text-white h-screen w-screen overflow-hidden flex flex-col font-body">
 
-    <header class="bg-red-700 p-2 lg:p-3 flex-none flex justify-between items-center shadow-lg z-20 relative h-[10vh]">
-        <div>
-            <h1 class="text-xl lg:text-3xl font-heading font-bold uppercase tracking-wider">Spicy Kerala Bistro</h1>
-            <p class="text-red-200 text-xs">Powered by Obsera Solutions</p>
+    <header class="bg-red-700 p-2 flex-none flex justify-between items-center shadow-lg z-20 relative h-[12vh]">
+        <div class="w-1/3">
+            <h1 class="text-xl lg:text-2xl font-heading font-bold uppercase tracking-wider leading-none">Spicy Kerala Bistro</h1>
+            <p class="text-red-200 text-xs mt-1">Powered by Obsera Solutions</p>
         </div>
-        <div class="text-right">
-            <h2 id="menu-title" class="text-2xl lg:text-4xl font-heading font-bold text-white uppercase">LOADING...</h2>
-            <div id="clock" class="text-base lg:text-lg text-red-100 font-mono">00:00</div>
+        <div class="w-2/3 text-right flex flex-col items-end">
+            <h2 id="menu-title" class="text-2xl lg:text-4xl font-heading font-bold text-white uppercase leading-none mb-1">LOADING...</h2>
+            <div id="clock" class="text-lg lg:text-xl text-red-100 font-mono font-bold bg-red-800 px-3 py-1 rounded inline-block">00:00:00</div>
         </div>
     </header>
 
-    <main class="flex-grow w-full p-2 lg:p-3 relative z-10 h-[82vh]">
+    <main class="flex-grow w-full p-2 relative z-10 h-[80vh]">
         <div id="menu-container" class="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 gap-3 h-full w-full">
             <p class="text-white text-xl text-center self-center w-full col-span-3">Loading Menu...</p>
         </div>
     </main>
 
     <footer class="bg-black flex-none border-t-4 border-red-700 shadow-xl z-20 relative h-[8vh] flex items-center">
-        <div class="smooth-scroll text-sm lg:text-xl text-yellow-400 font-bold leading-none block w-full">
+        <div class="smooth-scroll text-sm lg:text-lg text-yellow-400 font-bold leading-none block w-full px-2">
             ★ TODAY'S SPECIAL: 20% OFF ON FAMILY PACKS ★ CONTACT OBSERA SOLUTIONS FOR ADVERTISING HERE
         </div>
     </footer>
@@ -69,10 +60,6 @@
     // --- 1. CONFIGURATION ---
     const SHEET_ID = '1-dBjgzUDtImlzb5IH_nAubQ3nXWAbh72EPbd2O4l8uY'; 
     const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=0`;
-
-    // FORCE ZOOM FOR RASPBERRY PI
-    // If items look too big, change this to 0.8 or 0.7
-    const DEFAULT_ZOOM = 0.85; 
 
     const ITEMS_PER_SLIDE = 6;      
     const SLIDE_DURATION = 8000;    
@@ -90,19 +77,13 @@
         return window.innerWidth < 768; 
     }
 
-    // --- AUTO ZOOM SCRIPT ---
+    // --- AUTO ZOOM SCRIPT (Tweaked for safer fit) ---
     function applyAutoZoom() {
-        if (isMobile()) return; // Don't zoom on phones
-
-        const width = window.innerWidth;
+        if (isMobile()) return;
         const height = window.innerHeight;
-        
-        // Uncomment to see what your Pi sees:
-        // document.getElementById('debug-info').innerText = `Res: ${width}x${height}`;
-
-        // If screen thinks it is small (common Pi issue), force zoom out
+        // If screen is short (Pi often reports 720p or less), zoom out slightly
         if (height < 900) {
-            document.body.style.zoom = "75%";
+            document.body.style.zoom = "85%"; // Slightly shrink everything
         } else {
             document.body.style.zoom = "100%"; 
         }
@@ -152,6 +133,7 @@
         }
     }
 
+    // --- MOBILE VIEW ---
     function renderMobileView() {
         const container = document.getElementById('menu-container');
         document.getElementById('menu-title').innerText = "FULL MENU";
@@ -165,7 +147,7 @@
                         <span class="absolute top-0 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-1 z-10 rounded-br-lg">${page.title}</span>
                         <div class="w-1/3 bg-gray-700 relative"><img src="${item.image}" class="h-full w-full object-cover absolute inset-0"></div>
                         <div class="w-2/3 p-2 flex flex-col justify-center">
-                            <div class="flex justify-between items-start"><h3 class="text-lg font-bold text-yellow-500 font-heading leading-none">${item.name}</h3><span class="bg-gray-900 text-white px-2 py-0.5 rounded text-sm font-bold">${item.price}</span></div>
+                            <div class="flex justify-between items-start"><h3 class="text-base font-bold text-yellow-500 font-heading leading-none line-clamp-2">${item.name}</h3><span class="bg-gray-900 text-white px-2 py-0.5 rounded text-xs font-bold whitespace-nowrap ml-1">${item.price}</span></div>
                             <p class="text-gray-300 text-xs leading-tight mt-1 line-clamp-2">${item.desc}</p>
                         </div>
                     </div>`;
@@ -173,12 +155,14 @@
         });
     }
 
+    // --- TV VIEW ---
     function initSlideshow() {
         if(isMobile()) return;
+        applyAutoZoom();
         
-        applyAutoZoom(); // RUN THE ZOOM FIX
-
-        document.getElementById('menu-container').className = "grid grid-cols-3 grid-rows-2 gap-4 h-full w-full"; 
+        // Grid setup
+        document.getElementById('menu-container').className = "grid grid-cols-3 grid-rows-2 gap-3 h-full w-full"; 
+        
         currentSlideIndex = 0;
         showSlide(0); 
         if (slideTimer) clearInterval(slideTimer);
@@ -202,23 +186,28 @@
 
         slideDeck[index].items.forEach(item => {
             const fallbackImage = 'https://placehold.co/600x400/333/FFF?text=No+Image';
-            // NOTE: Added min-h-0 and overflow-hidden to ensure it never grows larger than the grid cell
+            
+            // NOTE: Using 'text-lg' instead of 'text-2xl' for Title to prevent overlap
+            // Using 'p-2' padding instead of 'p-4' to give more space
             container.innerHTML += `
                 <div class="flex bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-xl fade-in w-full h-full min-h-0">
                     <div class="w-5/12 bg-gray-700 relative h-full">
                         <img src="${item.image}" class="h-full w-full object-cover absolute inset-0" onerror="this.src='${fallbackImage}'">
                     </div>
-                    <div class="w-7/12 p-2 lg:p-3 flex flex-col justify-center h-full overflow-hidden">
-                        <div class="flex justify-between items-start mb-1 shrink-0">
-                            <h3 class="text-lg lg:text-xl font-bold text-yellow-500 font-heading leading-tight line-clamp-2">${item.name}</h3>
-                            <span class="bg-red-600 text-white px-2 py-0.5 rounded text-base font-bold whitespace-nowrap ml-2 shadow">${item.price}</span>
+                    <div class="w-7/12 p-2 flex flex-col justify-center h-full overflow-hidden">
+                        
+                        <div class="flex justify-between items-start mb-1 shrink-0 gap-2">
+                            <h3 class="text-lg font-bold text-yellow-500 font-heading leading-tight line-clamp-2">${item.name}</h3>
+                            <span class="bg-red-600 text-white px-2 py-0.5 rounded text-base font-bold whitespace-nowrap shadow shrink-0">${item.price}</span>
                         </div>
-                        <p class="text-gray-300 text-xs lg:text-sm leading-snug line-clamp-3 overflow-hidden text-ellipsis">${item.desc}</p>
+                        
+                        <p class="text-gray-300 text-xs leading-snug line-clamp-3 overflow-hidden text-ellipsis">${item.desc}</p>
                     </div>
                 </div>`;
         });
     }
 
+    // UPDATED CLOCK: Added seconds
     function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
     
     window.addEventListener('resize', () => { 
@@ -226,7 +215,6 @@
         isMobile() ? renderMobileView() : initSlideshow(); 
     });
     
-    // Initial run
     applyAutoZoom();
     fetchMenuData(); 
     setInterval(updateClock, 1000); 
