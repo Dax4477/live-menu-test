@@ -26,15 +26,20 @@
 
         /* Smooth Scrolling Text */
         .smooth-scroll {
-            display: inline-block;
-            white-space: nowrap;
-            will-change: transform;
-            animation: scroll-left 25s linear infinite;
-        }
-        @keyframes scroll-left {
-            from { transform: translateX(100vw); }
-            to { transform: translateX(-100%); } 
-        }
+    display: inline-block;
+    white-space: nowrap;
+    will-change: transform;
+    /* Removed "25s" - we will add it via JS */
+    animation-name: scroll-left; 
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+/* Ensure the animation moves from far right (screen width) to far left (text width) */
+@keyframes scroll-left {
+    from { transform: translateX(100vw); } 
+    to { transform: translateX(-100%); } 
+}
     </style>
 </head>
 
