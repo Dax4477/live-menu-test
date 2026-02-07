@@ -109,6 +109,18 @@
 
     function processData(rows) {
         let groupedData = {};
+
+        // ... inside processData function ...
+
+// FORCE UPDATE FOOTER
+const tickerElement = document.getElementById('ticker-text');
+if (tickerElement) {
+     tickerElement.innerText = tickerMessage;
+     
+     // ADD THIS LINE HERE:
+     // Wait a tiny moment for the text to render, then calculate speed
+     setTimeout(adjustTickerSpeed, 100); 
+}
         
         // Default Message
         let tickerMessage = "★ FOR ADVERTISING THIS SCREEN ★ CONTACT OBSERA SOLUTIONS ★ obserasolutions.site ★ WHATSAPP- +91 9562551376";
@@ -291,6 +303,30 @@
             startCorrectView();
         }
     }, 3000);
+
+    function adjustTickerSpeed() {
+    const ticker = document.getElementById('ticker-text');
+    if (!ticker) return;
+
+    // 1. Get the width of the text and the screen
+    const textWidth = ticker.offsetWidth;
+    const screenWidth = window.innerWidth;
+
+    // 2. Set your desired speed (Pixels per Second)
+    // 150 is a good readable speed. Higher = Faster. Lower = Slower.
+    const speedPixelsPerSec = 150; 
+
+    // 3. Calculate total distance (Enter screen -> Exit screen)
+    const totalDistance = screenWidth + textWidth;
+
+    // 4. Calculate Time (Time = Distance / Speed)
+    const duration = totalDistance / speedPixelsPerSec;
+
+    // 5. Apply the new time to the CSS
+    ticker.style.animationDuration = `${duration}s`;
+}
+
+    
 
 </script>
 </body>
